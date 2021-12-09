@@ -107,7 +107,7 @@
 </script>
 
 <div class="container mx-auto mt-6">
-  <h1>Patrimoine Wallon</h1>
+  <h1>Équipements sportifs en Île-de-France</h1>
   <div class="search-container">
     <label class="search-box">
       <input type="text" bind:value={search} on:input={debouncedRefresh} />
