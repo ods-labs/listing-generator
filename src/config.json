@@ -1,5 +1,9 @@
 {
     "domainid": "public",
-    "datasetid": "patrimoine-wallon-monuments",
-    "filter": "commune"
+    "datasetid": "res_equipements_2017",
+    "filters": ["gestiontypeproprietaireprinclib", "equipementtypelib"],
+    "axex": "naturelibelle",
+    "fieldTitle": "insnom",
+    "fieldType": "equipementtypelib",
+    "title": "Titre du graphique"
 }

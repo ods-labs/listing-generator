@@ -17,10 +17,13 @@ const getDatasets = async(domainid) => {
 
 
 const getRecords = async(domainid, datasetid, search = "", refine = {}) => {
+    // refine : { 'fieldid' : 'valeur du refine' }
+
     const client = new ApiClient({ domain: domainid });
     let query = fromCatalog().dataset(datasetid).records().limit(12);
-    if (refine.field && refine.value) {
-        query = query.refine(`${refine.field}:"${refine.value}"`);
+    let keys = Object.keys(refine);
+    for (let i = 0; i < keys.length; i += 1) {
+        query = query.refine(`${keys[i]}:"${refine[keys[i]]}"`);
     }
     if (search) {
         query = query.where(`"${search}"`)
@@ -32,12 +35,18 @@ const getRecords = async(domainid, datasetid, search = "", refine = {}) => {
         });
 };
 
-const getFilterCategories = async(domainid, datasetid, search = "", field) => {
+const getFilterCategories = async(domainid, datasetid, search = "", field, refine = {}) => {
     const client = new ApiClient({ domain: domainid });
     let query = fromCatalog()
         .dataset(datasetid)
         .aggregates()
         .groupBy(field);
+    let keys = Object.keys(refine);
+    for (let i = 0; i < keys.length; i += 1) {
+        if (keys[i] != field) {
+            query = query.refine(`${keys[i]}:"${refine[keys[i]]}"`);
+        }
+    }
     if (search) {
         query = query.where(`"${search}"`);
     }
@@ -48,6 +57,27 @@ const getFilterCategories = async(domainid, datasetid, search = "", field) => {
         });
 };
 
+const getAggregates = async(domainid, datasetid, search = "", field, refine = {}) => {
+    const client = new ApiClient({ domain: domainid });
+    let query = fromCatalog()
+        .dataset(datasetid)
+        .aggregates()
+        .groupBy(field)
+        .orderBy("-count")
+        .select("count(*) as count");
+    let keys = Object.keys(refine);
+    for (let i = 0; i < keys.length; i += 1) {
+        query = query.refine(`${keys[i]}:"${refine[keys[i]]}"`);
+    }
+    if (search) {
+        query = query.where(`"${search}"`);
+    }
+    return client.get(query)
+        .then(res => res)
+        .catch(err => {
+            throw err;
+        });
+};
 
 
 const getNext = async(links) => {
@@ -64,4 +94,4 @@ const getNext = async(links) => {
         });
 }
 
-export default { getRecords, getDatasets, getNext, getFilterCategories }
+export default { getRecords, getDatasets, getNext, getFilterCategories, getAggregates }
