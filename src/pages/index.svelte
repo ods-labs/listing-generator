@@ -11,16 +11,13 @@
   let errorMsg;
   let links = [];
   let myChart = undefined;
-
-  //let categories = [];
   let categories = {};
-  //let activeFilter;
   let activeFilter = {};
+  let cat = [];
 
   let limit;
 
   const debouncedRefresh = debounce(async () => {
-    // console.log(activeFilter);
     ods
       .getRecords(config.domainid, config.datasetid, search, activeFilter)
       .then((res) => {
@@ -33,16 +30,10 @@
         records = [];
       });
     config.filters.forEach((filter) => {
-      ods
-        .getFilterCategories(
-          config.domainid,
-          config.datasetid,
-          search,
-          filter,
-          activeFilter
-        )
+      ods.getFilterCategories(config.domainid,config.datasetid,search,filter,activeFilter)
         .then((rescat) => {
-          categories[filter] = rescat.aggregations;
+          cat = rescat.records;
+          categories[filter] = cat.map(e => e.record.fields);
           errorMsg = undefined;
         })
         .catch((err) => {
@@ -61,7 +52,6 @@
       .then((resagg) => {
         if (myChart==undefined) {
        myChart = chartUtilities.createChart("myChart",resagg,config.title,config.axex);
-       console.log(myChart);
       } else {
         chartUtilities.updateChart(myChart,resagg,config.axex);
       };
@@ -78,7 +68,6 @@
     ods
       .getNext(links)
       .then((res) => {
-        // console.log(res);
         records = res.records;
         links = res.links;
         errorMsg = undefined;
@@ -95,8 +84,6 @@
 
   const manageFilter = (event) => {
     //  event.detail : { 'id' : 'valeur sélectionnée' }
-    // console.log(activeFilter);
-    // console.log(event);
     if (event.detail) {
       let id = Object.keys(event.detail)[0];
       activeFilter[id] = event.detail[id];
