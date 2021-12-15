@@ -3,10 +3,9 @@ import Chart from "chart.js/auto";
 const createChart = (elementId, resagg, title, axex) => {
     let labels = [];
     let values = [];
-    for (const dataObj of resagg.aggregations) {
-        labels.push(dataObj[axex]);
-        values.push(parseInt(dataObj.count));
-    }
+    let chartItems = resagg.records;
+    labels = chartItems.map(chartItem => chartItem.record.fields[axex]);
+    values = chartItems.map(chartItem => chartItem.record.fields.count);
     // console.log(labels);
     // console.log(values);
     // create the chart
@@ -45,10 +44,9 @@ const createChart = (elementId, resagg, title, axex) => {
 const updateChart = (myChart, resagg, axex) => {
     let labels = [];
     let values = [];
-    for (const dataObj of resagg.aggregations) {
-        labels.push(dataObj[axex]);
-        values.push(parseInt(dataObj.count));
-    }
+    let chartItems = resagg.records;
+    labels = chartItems.map(chartItem => chartItem.record.fields[axex]);
+    values = chartItems.map(chartItem => chartItem.record.fields.count);
     myChart.data.datasets[0].data = values;
     myChart.data.labels = labels;
     myChart.update();

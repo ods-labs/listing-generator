@@ -60,7 +60,7 @@ const getAggregates = async(domainid, datasetid, search = "", field, refine = {}
     const client = new ApiClient({ domain: domainid });
     let query = fromCatalog()
         .dataset(datasetid)
-        .aggregates()
+        .records()
         .select("count(*) as count")
         .groupBy(field)
         .orderBy("-count")

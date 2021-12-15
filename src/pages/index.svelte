@@ -13,7 +13,7 @@
   let myChart = undefined;
   let categories = {};
   let activeFilter = {};
-  let cat = [];
+  let category = [];
 
   let limit;
 
@@ -32,8 +32,8 @@
     config.filters.forEach((filter) => {
       ods.getFilterCategories(config.domainid,config.datasetid,search,filter,activeFilter)
         .then((rescat) => {
-          cat = rescat.records;
-          categories[filter] = cat.map(e => e.record.fields);
+          category = rescat.records;
+          categories[filter] = category.map(e => e.record.fields);
           errorMsg = undefined;
         })
         .catch((err) => {
