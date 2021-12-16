@@ -14,8 +14,6 @@ const getDatasets = async(domainid) => {
         });
 };
 
-
-
 const getRecords = async(domainid, datasetid, search = "", refine = {}) => {
     // refine : { 'fieldid' : 'valeur du refine' }
     const client = new ApiClient({ domain: domainid });

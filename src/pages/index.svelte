@@ -30,38 +30,62 @@
         records = [];
       });
     config.filters.forEach((filter) => {
-      ods.getFilterCategories(config.domainid,config.datasetid,search,filter,activeFilter)
+      ods
+        .getFilterCategories(
+          config.domainid,
+          config.datasetid,
+          search,
+          filter,
+          activeFilter
+        )
         .then((rescat) => {
           category = rescat.records;
-          categories[filter] = category.map(e => e.record.fields);
+          categories[filter] = category.map((e) => e.record.fields);
           errorMsg = undefined;
         })
         .catch((err) => {
           // errorMsg = `Pas d'enregistrement pour le champ ${filter} (${err.message})`;
-          console.error(`Pas d'enregistrement pour le champ ${filter} (${err.message})`);
+          console.error(
+            `Pas d'enregistrement pour le champ ${filter} (${err.message})`
+          );
           records = [];
         });
     });
-    ods.getAggregates(
-        config.domainid,
-        config.datasetid,
-        search,
-        config.axex,
-        activeFilter
-      )
-      .then((resagg) => {
-        if (myChart==undefined) {
-       myChart = chartUtilities.createChart("myChart",resagg,config.title,config.axex);
-      } else {
-        chartUtilities.updateChart(myChart,resagg,config.axex);
-      };
-        errorMsg = undefined;
-      })
-      .catch((err) => {
-        // errorMsg = `Pas d'enregistrement pour le champ ${config.axex} (${err.message})`;
-        console.error(`Pas d'enregistrement pour le champ ${config.axex} (${err.message})`);
-        records = [];
-      });
+    config.charts.forEach((chart) => {
+      ods
+        .getAggregates(
+          config.domainid,
+          config.datasetid,
+          search,
+          config.axex,
+          activeFilter,
+          chart.id,
+          chart.type
+        )
+        .then((resagg) => {
+          if (myChart == undefined) {
+            myChart = chartUtilities.createChart(
+              chart.id,
+              resagg,
+              config.title,
+              config.axex,
+              chart.type
+            );
+            console.log(myChart);
+
+          } else {
+            chartUtilities.updateChart(myChart, resagg, config.axex);
+          }
+          errorMsg = undefined;
+        })
+        .catch((err) => {
+          // errorMsg = `Pas d'enregistrement pour le champ ${config.axex} (${err.message})`;
+          console.error(
+            `Pas d'enregistrement pour le champ ${config.axex} (${err.message})`
+          );
+          records = [];
+        });
+    });
   }, 500);
 
   const seeNext = async () => {
@@ -74,7 +98,9 @@
       })
       .catch((err) => {
         // errorMsg = `DatasetID introuvable ou erreur de connexion (${err.message})`;
-        console.error(`DatasetID introuvable ou erreur de connexion (${err.message})`);
+        console.error(
+          `DatasetID introuvable ou erreur de connexion (${err.message})`
+        );
         records = [];
         links = [];
       });
@@ -124,10 +150,13 @@
   {#if errorMsg}
     {errorMsg}
   {/if}
-
   <div class="chart-container">
-    <canvas id="myChart" height="300" width="500" />
+    {#each config.charts as chart}
+      {chart.id}
+      <canvas id="{chart.id}" height="300" width="500" />
+    {/each}
   </div>
+
   <div class="grid">
     {#each records as record}
       <div class="box">
@@ -204,12 +233,12 @@
     position: relative;
     display: block;
     padding: 20px 40px;
-}
+  }
 
-canvas {
+  canvas {
     margin-top: 0;
     margin-bottom: 0;
     margin-left: auto;
     margin-right: auto;
-}
+  }
 </style>

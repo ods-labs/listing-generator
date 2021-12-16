@@ -5,5 +5,16 @@
     "axex": "naturelibelle",
     "fieldTitle": "insnom",
     "fieldType": "equipementtypelib",
-    "title": "Titre du graphique"
+    "title": "Répartition par nature d'équipement",
+    "charts": [{
+            "chartCreate": "newChart1",
+            "id": "myChart1",
+            "type": "bar"
+        },
+        {
+            "chartCreate": "newChart2",
+            "id": "myChart2",
+            "type": "pie"
+        }
+    ]
 }
