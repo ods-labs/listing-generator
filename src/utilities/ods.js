@@ -54,14 +54,14 @@ const getFilterCategories = async(domainid, datasetid, search = "", field, refin
         });
 };
 
-const getAggregates = async(domainid, datasetid, search = "", field, refine = {}) => {
+const getAggregates = async(domainid, datasetid, search = "", field, refine = {}, expression) => {
     const client = new ApiClient({ domain: domainid });
     let query = fromCatalog()
         .dataset(datasetid)
         .records()
-        .select("count(*) as count")
+        .select(expression + " as serie")
         .groupBy(field)
-        .orderBy("-count")
+        .orderBy("-serie")
     let keys = Object.keys(refine);
     for (let i = 0; i < keys.length; i += 1) {
         query = query.refine(`${keys[i]}:"${refine[keys[i]]}"`);

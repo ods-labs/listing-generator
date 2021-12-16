@@ -2,19 +2,28 @@
     "domainid": "public",
     "datasetid": "res_equipements_2017",
     "filters": ["gestiontypeproprietaireprinclib", "equipementtypelib"],
-    "axex": "naturelibelle",
     "fieldTitle": "insnom",
     "fieldType": "equipementtypelib",
-    "title": "Répartition par nature d'équipement",
     "charts": [{
-            "chartCreate": "newChart1",
+            "title": "Répartition par nature d'équipement",
+            "axex": "naturelibelle",
             "id": "myChart1",
-            "type": "bar"
+            "type": "bar",
+            "expression": "count(*)"
         },
         {
-            "chartCreate": "newChart2",
+            "title": "Répartition par gestionnaire et nombre de vestiaires",
+            "axex": "gestiontypeproprietaireprinclib",
             "id": "myChart2",
-            "type": "pie"
+            "type": "pie",
+            "expression": "sum(equnbvestiairespo)"
+        },
+        {
+            "title": "Répartition par accès handi et nombre moyen de couloirs de piste",
+            "axex": "equacceshandimaire",
+            "id": "myChart3",
+            "type": "line",
+            "expression": "avg(equnbcouloirpiste)"
         }
     ]
 }

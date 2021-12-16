@@ -4,10 +4,10 @@ const createChart = (chartId, resagg, title, axex, chartType) => {
     let labels = [];
     let values = [];
     let chartItems = resagg.records;
+    // console.log(chartItems);
     labels = chartItems.map(chartItem => chartItem.record.fields[axex]);
-    values = chartItems.map(chartItem => chartItem.record.fields.count);
+    values = chartItems.map(chartItem => chartItem.record.fields.serie);
     // create the chart
-    console.log(chartId);
     const ctx = document.getElementById(chartId).getContext("2d");
     let myChart = new Chart(ctx, {
         type: chartType,
@@ -44,7 +44,7 @@ const updateChart = (myChart, resagg, axex) => {
     let values = [];
     let chartItems = resagg.records;
     labels = chartItems.map(chartItem => chartItem.record.fields[axex]);
-    values = chartItems.map(chartItem => chartItem.record.fields.count);
+    values = chartItems.map(chartItem => chartItem.record.fields.serie);
     myChart.data.datasets[0].data = values;
     myChart.data.labels = labels;
     myChart.update();

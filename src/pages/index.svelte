@@ -5,12 +5,13 @@
   import { debounce } from "lodash";
   import config from "../config.json";
   import Select from "svelte-select";
+import { onMount } from "svelte";
 
   let search;
   let records = [];
   let errorMsg;
   let links = [];
-  let myChart = undefined;
+  let charts = {};
   let categories = {};
   let activeFilter = {};
   let category = [];
@@ -57,24 +58,21 @@
           config.domainid,
           config.datasetid,
           search,
-          config.axex,
+          chart.axex,
           activeFilter,
-          chart.id,
-          chart.type
-        )
+          chart.expression)
         .then((resagg) => {
-          if (myChart == undefined) {
-            myChart = chartUtilities.createChart(
+          if (charts[chart.id] == undefined) {
+            charts[chart.id] = chartUtilities.createChart(
               chart.id,
               resagg,
-              config.title,
-              config.axex,
-              chart.type
+              chart.title,
+              chart.axex,
+              chart.type,
+              chart.expression
             );
-            console.log(myChart);
-
           } else {
-            chartUtilities.updateChart(myChart, resagg, config.axex);
+            chartUtilities.updateChart(charts[chart.id], resagg, chart.axex, chart.expression);
           }
           errorMsg = undefined;
         })
@@ -106,7 +104,12 @@
       });
   };
 
+
+  onMount(() => {
   debouncedRefresh();
+  });
+  
+  
 
   const manageFilter = (event) => {
     //  event.detail : { 'id' : 'valeur sélectionnée' }
