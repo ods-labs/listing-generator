@@ -1,11 +1,13 @@
-<script>
+<script > 
   import { url } from "@roxi/routify";
   import ods from "../utilities/ods";
   import chartUtilities from "../utilities/chartUtilities";
   import { debounce } from "lodash";
   import config from "../config.json";
   import Select from "svelte-select";
-import { onMount } from "svelte";
+  import Searchbar from "../components/Searchbar.svelte";
+  import { onMount } from "svelte"; 
+
 
   let search;
   let records = [];
@@ -105,10 +107,8 @@ import { onMount } from "svelte";
   };
 
 
-  onMount(() => {
-  debouncedRefresh();
-  });
-  
+  onMount(() => {debouncedRefresh();
+});
   
 
   const manageFilter = (event) => {
@@ -120,14 +120,14 @@ import { onMount } from "svelte";
     debouncedRefresh();
   };
   const manageClear = (id) => {};
+
 </script>
 
 <div class="container mx-auto mt-6">
   <h1>Équipements sportifs en Île-de-France</h1>
   <div class="search-container">
-    <label class="search-box">
-      <input type="text" bind:value={search} on:input={debouncedRefresh} />
-    </label>
+    <Searchbar on:input={debouncedRefresh}  bind:search/>
+ 
     <div class="select-button">
       {#each config.filters as filter}
         <Select
