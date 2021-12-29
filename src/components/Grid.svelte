@@ -8,17 +8,20 @@
 
   function childSeeNext() {
     dispatch("click");
-  }
+  };
+
 </script>
 
 <div class="grid">
   {#each records as record}
     <div class="box">
       <h3>{record.record.fields[config.fieldTitle]}</h3>
-      <p>{record.record.fields[config.fieldType]}</p>
-      <p>{record.record.fields.naturelibelle}</p>
+
       <ul>
-        <li>Commune : {record.record.fields.comlib}</li>
+         {#each config.fieldList as field}
+        <li> {field.title} : {record.record.fields[field.id]}</li>
+      {/each}
+      <a href="https://www.google.com/maps/search/{record.record.fields[config.fieldCoordinates[0]]}" target="_blank">Ouvrir dans Google Maps</a>
       </ul>
     </div>
   {/each}
@@ -29,7 +32,7 @@
 
 <style>
   .grid {
-    grid-template-columns: repeat(4, auto);
+    grid-template-columns: repeat(3, auto);
     grid-gap: 20px;
     margin-bottom: 10px;
   }

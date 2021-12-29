@@ -3,7 +3,32 @@
     "datasetid": "res_equipements_2017",
     "filters": ["gestiontypeproprietaireprinclib", "equipementtypelib"],
     "fieldTitle": "insnom",
-    "fieldType": "equipementtypelib",
+    "fieldCoordinates": "coordonnees",
+    "fieldList": [{
+            "id": "equipementtypelib",
+            "title": "Type d'équipement"
+        },
+        {
+            "id": "naturelibelle",
+            "title": "Nature de l'équipement"
+        },
+        {
+            "id": "cominsee",
+            "title": "Code insee"
+        },
+        {
+            "id": "comlib",
+            "title": "Commune"
+        },
+        {
+            "id": "equnbequidentique",
+            "title": "Nombre d'équipement(s)"
+        },
+        {
+            "id": "gestiontypeproprietaireprinclib",
+            "title": "Gestionnaire"
+        }
+    ],
     "charts": [{
             "title": "Répartition par nature d'équipement",
             "axex": "naturelibelle",
