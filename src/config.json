@@ -50,5 +50,11 @@
             "type": "line",
             "expression": "avg(equnbcouloirpiste)"
         }
-    ]
+    ],
+    "kpi": {
+        "id": "myKpi1",
+        "title": "Total équipements",
+        "expression": "count(*)",
+        "groupBy": ""
+    }
 }

@@ -11,18 +11,20 @@
 
   let search;
   let records = [];
-  let record;
   let errorMsg;
   let links = [];
   let charts = {};
   let categories = {};
   let activeFilter = {};
   let category = [];
+  let title;
+  let value;
+  let myKpi = [];
 
-  let limit;
 
   const debouncedRefresh = debounce(async () => {
-    ods.getRecords(config.domainid, config.datasetid, search, activeFilter)
+    ods
+      .getRecords(config.domainid, config.datasetid, search, activeFilter)
       .then((res) => {
         links = res.links;
         records = res.records;
@@ -33,27 +35,53 @@
         records = [];
       });
     config.filters.forEach((filter) => {
-      ods.getFilterCategories(config.domainid,config.datasetid,search,filter,activeFilter)
+      ods
+        .getFilterCategories(
+          config.domainid,
+          config.datasetid,
+          search,
+          filter,
+          activeFilter
+        )
         .then((rescat) => {
           category = rescat.records;
           categories[filter] = category.map((e) => e.record.fields);
+          // console.log(categories[filter]);
           errorMsg = undefined;
         })
         .catch((err) => {
           // errorMsg = `Pas d'enregistrement pour le champ ${filter} (${err.message})`;
-          console.error(
-            `Pas d'enregistrement pour le champ ${filter} (${err.message})`
-          );
+          console.error(`Pas d'enregistrement pour le champ ${filter} (${err.message})`);
           records = [];
         });
     });
     config.charts.forEach((chart) => {
-      ods.getAggregates(config.domainid,config.datasetid,search,chart.axex,activeFilter,chart.expression)
+      ods
+        .getAggregates(
+          config.domainid,
+          config.datasetid,
+          search,
+          chart.axex,
+          activeFilter,
+          chart.expression
+        )
         .then((resagg) => {
           if (charts[chart.id] == undefined) {
-            charts[chart.id] = chartUtilities.createChart(chart.id,resagg,chart.title,chart.axex,chart.type,chart.expression);
+            charts[chart.id] = chartUtilities.createChart(
+              chart.id,
+              resagg,
+              chart.title,
+              chart.axex,
+              chart.type,
+              chart.expression
+            );
           } else {
-            chartUtilities.updateChart(charts[chart.id],resagg,chart.axex,chart.expression);
+            chartUtilities.updateChart(
+              charts[chart.id],
+              resagg,
+              chart.axex,
+              chart.expression
+            );
           }
           errorMsg = undefined;
         })
@@ -65,6 +93,29 @@
           records = [];
         });
     });
+  
+    
+      ods
+        .getAggregates(
+          config.domainid,
+          config.datasetid,
+          search,
+          config.kpi.groupBy,
+          activeFilter,
+          config.kpi.expression
+        )
+        .then((reskpi) => {
+          myKpi = reskpi.records;
+          console.log(myKpi);
+          title = config.kpi.title;
+          // value = myKpi.map(e => e.record.fields.serie);
+          errorMsg = undefined;
+        })
+        .catch((err) => {
+          // errorMsg = `Pas d'enregistrement pour le champ ${filter} (${err.message})`;
+          console.error(`Pas d'enregistrement pour le champ ${kpi} (${err.message})`);
+          records = [];
+        });
   }, 500);
 
   const seeNext = async () => {
@@ -77,9 +128,7 @@
       })
       .catch((err) => {
         // errorMsg = `DatasetID introuvable ou erreur de connexion (${err.message})`;
-        console.error(
-          `DatasetID introuvable ou erreur de connexion (${err.message})`
-        );
+        console.error(`DatasetID introuvable ou erreur de connexion (${err.message})`);
         records = [];
         links = [];
       });
@@ -121,14 +170,21 @@
           on:clear={function moncallbackdevenement(event) {
             delete activeFilter[filter];
             debouncedRefresh();
-          }}
-        />
+          }} />
       {/each}
     </div>
   </div>
   {#if errorMsg}
     {errorMsg}
   {/if}
+  <div class="kpi-container">
+    {#each myKpi as kpi}
+      <h1>
+        {kpi.record.fields.serie}
+      </h1>
+      <p>{title}</p>
+      {/each}
+  </div>
   <div class="chart-container">
     {#each config.charts as chart}
       {chart.id}
@@ -164,5 +220,9 @@
     margin-bottom: 0;
     margin-left: auto;
     margin-right: auto;
+  }
+
+  .kpi-container {
+    background-color: red;
   }
 </style>

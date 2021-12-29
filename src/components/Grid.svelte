@@ -21,7 +21,7 @@
          {#each config.fieldList as field}
         <li> {field.title} : {record.record.fields[field.id]}</li>
       {/each}
-      <a href="https://www.google.com/maps/search/{record.record.fields[config.fieldCoordinates[0]]}" target="_blank">Ouvrir dans Google Maps</a>
+      <a href="https://www.google.com/maps/search/{record.record.fields[config.fieldCoordinates].lat},{record.record.fields[config.fieldCoordinates].lon}" target="_blank">Ouvrir dans Google Maps</a>
       </ul>
     </div>
   {/each}

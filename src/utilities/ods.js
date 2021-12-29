@@ -76,6 +76,28 @@ const getAggregates = async(domainid, datasetid, search = "", field, refine = {}
         });
 };
 
+const getKpis = async(domainid, datasetid, search = "", id, field, refine = {}, expression) => {
+    const client = new ApiClient({ domain: domainid });
+    let query = fromCatalog()
+        .dataset(datasetid)
+        .records()
+        .select(expression + " as " + id)
+        .groupBy(field)
+        .orderBy(expression)
+    let keys = Object.keys(refine);
+    for (let i = 0; i < keys.length; i += 1) {
+        query = query.refine(`${keys[i]}:"${refine[keys[i]]}"`);
+    }
+    if (search) {
+        query = query.where(`"${search}"`);
+    }
+    return client.get(query)
+        .then(res => res)
+        .catch(err => {
+            throw err;
+        });
+};
+
 
 const getNext = async(links) => {
     let href;
@@ -91,4 +113,4 @@ const getNext = async(links) => {
         });
 }
 
-export default { getRecords, getDatasets, getNext, getFilterCategories, getAggregates }
+export default { getRecords, getDatasets, getNext, getFilterCategories, getAggregates, getKpis }

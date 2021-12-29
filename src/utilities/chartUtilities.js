@@ -7,6 +7,8 @@ const createChart = (chartId, resagg, title, axex, chartType) => {
     // console.log(chartItems);
     labels = chartItems.map(chartItem => chartItem.record.fields[axex]);
     values = chartItems.map(chartItem => chartItem.record.fields.serie);
+    // console.log(labels);
+
     // create the chart
     const ctx = document.getElementById(chartId).getContext("2d");
     let myChart = new Chart(ctx, {
