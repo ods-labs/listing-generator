@@ -14,9 +14,6 @@
 </label>
 
 <style lang="scss">
-  .searchbar-container {
-    width: 100%;
-  }
 
   .search-box {
     margin-right: 10px;

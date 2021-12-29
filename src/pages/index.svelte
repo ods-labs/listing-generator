@@ -1,4 +1,4 @@
-<script > 
+<script>
   import { url } from "@roxi/routify";
   import ods from "../utilities/ods";
   import chartUtilities from "../utilities/chartUtilities";
@@ -6,11 +6,12 @@
   import config from "../config.json";
   import Select from "svelte-select";
   import Searchbar from "../components/Searchbar.svelte";
-  import { onMount } from "svelte"; 
-
+  import Grid from "../components/Grid.svelte";
+  import { onMount } from "svelte";
 
   let search;
   let records = [];
+  let record;
   let errorMsg;
   let links = [];
   let charts = {};
@@ -21,8 +22,7 @@
   let limit;
 
   const debouncedRefresh = debounce(async () => {
-    ods
-      .getRecords(config.domainid, config.datasetid, search, activeFilter)
+    ods.getRecords(config.domainid, config.datasetid, search, activeFilter)
       .then((res) => {
         links = res.links;
         records = res.records;
@@ -33,14 +33,7 @@
         records = [];
       });
     config.filters.forEach((filter) => {
-      ods
-        .getFilterCategories(
-          config.domainid,
-          config.datasetid,
-          search,
-          filter,
-          activeFilter
-        )
+      ods.getFilterCategories(config.domainid,config.datasetid,search,filter,activeFilter)
         .then((rescat) => {
           category = rescat.records;
           categories[filter] = category.map((e) => e.record.fields);
@@ -55,26 +48,12 @@
         });
     });
     config.charts.forEach((chart) => {
-      ods
-        .getAggregates(
-          config.domainid,
-          config.datasetid,
-          search,
-          chart.axex,
-          activeFilter,
-          chart.expression)
+      ods.getAggregates(config.domainid,config.datasetid,search,chart.axex,activeFilter,chart.expression)
         .then((resagg) => {
           if (charts[chart.id] == undefined) {
-            charts[chart.id] = chartUtilities.createChart(
-              chart.id,
-              resagg,
-              chart.title,
-              chart.axex,
-              chart.type,
-              chart.expression
-            );
+            charts[chart.id] = chartUtilities.createChart(chart.id,resagg,chart.title,chart.axex,chart.type,chart.expression);
           } else {
-            chartUtilities.updateChart(charts[chart.id], resagg, chart.axex, chart.expression);
+            chartUtilities.updateChart(charts[chart.id],resagg,chart.axex,chart.expression);
           }
           errorMsg = undefined;
         })
@@ -106,13 +85,11 @@
       });
   };
 
-
-  onMount(() => {debouncedRefresh();
-});
-  
+  onMount(() => {
+    debouncedRefresh();
+  });
 
   const manageFilter = (event) => {
-    //  event.detail : { 'id' : 'valeur sélectionnée' }
     if (event.detail) {
       let id = Object.keys(event.detail)[0];
       activeFilter[id] = event.detail[id];
@@ -120,14 +97,13 @@
     debouncedRefresh();
   };
   const manageClear = (id) => {};
-
 </script>
 
 <div class="container mx-auto mt-6">
   <h1>Équipements sportifs en Île-de-France</h1>
   <div class="search-container">
-    <Searchbar on:input={debouncedRefresh}  bind:search/>
- 
+    <Searchbar on:input={debouncedRefresh} bind:search />
+
     <div class="select-button">
       {#each config.filters as filter}
         <Select
@@ -156,38 +132,10 @@
   <div class="chart-container">
     {#each config.charts as chart}
       {chart.id}
-      <canvas id="{chart.id}" height="300" width="500" />
+      <canvas id={chart.id} height="300" width="500" />
     {/each}
   </div>
-
-  <div class="grid">
-    {#each records as record}
-      <div class="box">
-        <h3>{record.record.fields[config.fieldTitle]}</h3>
-        <p>{record.record.fields[config.fieldType]}</p>
-        <p>{record.record.fields.naturelibelle}</p>
-        <ul>
-          <li>Commune : {record.record.fields.comlib}</li>
-        </ul>
-      </div>
-    {/each}
-  </div>
-  {#if links.length > 0}
-    <!-- svelte-ignore a11y-missing-attribute -->
-    <a on:click={seeNext}>See next 10 results</a>
-  {/if}
-
-  <hr />
-
-  <p>
-    To see an example app that shows off a lot of Routify's features, go to <a
-      href="/example">/example</a
-    >
-  </p>
-  <p>
-    This template is ready to be used in production! just delete the example app
-    at: src/pages/example
-  </p>
+  <Grid on:click={seeNext} bind:records bind:links />
 </div>
 
 <style lang="scss" global>
@@ -199,39 +147,12 @@
     padding: 10px 0px;
   }
 
-  .search-box {
-    margin-right: 10px;
-    border: var(--border, 1px solid #d8dbdf);
-    height: 40px;
-    input {
-      height: 40px;
-    }
-  }
-
   .select-button {
     width: 150px;
     height: auto;
     border-radius: 4px;
   }
-  .grid {
-    grid-template-columns: repeat(4, auto);
-    grid-gap: 20px;
-    margin-bottom: 10px;
-  }
 
-  @media (max-width: 767px) {
-    .grid {
-      grid-template-columns: repeat(1, auto);
-    }
-  }
-
-  .box {
-    border: 1px solid rgba(0, 0, 0, 0.24);
-    padding: 20px;
-    border-radius: 5px;
-    background: #fff;
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-  }
   .chart-container {
     position: relative;
     display: block;
