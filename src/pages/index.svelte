@@ -17,134 +17,128 @@
   let categories = {};
   let activeFilter = {};
   let category = [];
-  let title;
-  let value;
-  let myKpi = [];
-
+  let mykpis = {};
 
   const debouncedRefresh = debounce(async () => {
-    ods
-      .getRecords(config.domainid, config.datasetid, search, activeFilter)
-      .then((res) => {
-        links = res.links;
-        records = res.records;
-        errorMsg = undefined;
-      })
-      .catch((err) => {
-        errorMsg = `Pas d'enregistrement (${err.message})`;
-        records = [];
+      ods.getRecords(config.domainid, config.datasetid, search, activeFilter)
+        .then((res) => {
+          links = res.links;
+          records = res.records;
+          errorMsg = undefined;
+        })
+        .catch((err) => {
+          errorMsg = `Pas d'enregistrement (${err.message})`;
+          records = [];
+        });
+
+      config.filters.forEach((filter) => {
+        ods.getFilterCategories(
+            config.domainid,
+            config.datasetid,
+            search,
+            filter,
+            activeFilter
+          )
+          .then((rescat) => {
+            category = rescat.records;
+            categories[filter] = category.map((e) => e.record.fields);
+            // console.log(categories[filter]);
+            errorMsg = undefined;
+          })
+          .catch((err) => {
+            // errorMsg = `Pas d'enregistrement pour le champ ${filter} (${err.message})`;
+            console.error(`Pas d'enregistrement pour le champ ${filter} (${err.message})`);
+            records = [];
+          });
       });
-    config.filters.forEach((filter) => {
-      ods
-        .getFilterCategories(
-          config.domainid,
-          config.datasetid,
-          search,
-          filter,
-          activeFilter
-        )
-        .then((rescat) => {
-          category = rescat.records;
-          categories[filter] = category.map((e) => e.record.fields);
-          // console.log(categories[filter]);
-          errorMsg = undefined;
-        })
-        .catch((err) => {
-          // errorMsg = `Pas d'enregistrement pour le champ ${filter} (${err.message})`;
-          console.error(`Pas d'enregistrement pour le champ ${filter} (${err.message})`);
-          records = [];
-        });
-    });
-    config.charts.forEach((chart) => {
-      ods
-        .getAggregates(
-          config.domainid,
-          config.datasetid,
-          search,
-          chart.axex,
-          activeFilter,
-          chart.expression
-        )
-        .then((resagg) => {
-          if (charts[chart.id] == undefined) {
-            charts[chart.id] = chartUtilities.createChart(
-              chart.id,
-              resagg,
-              chart.title,
-              chart.axex,
-              chart.type,
-              chart.expression
+      config.charts.forEach((chart) => {
+        ods
+          .getAggregates(
+            config.domainid,
+            config.datasetid,
+            search,
+            chart.axex,
+            activeFilter,
+            chart.expression
+          )
+          .then((resagg) => {
+            if (charts[chart.id] == undefined) {
+              charts[chart.id] = chartUtilities.createChart(
+                chart.id,
+                resagg,
+                chart.title,
+                chart.axex,
+                chart.type,
+                chart.expression
+              );
+            } else {
+              chartUtilities.updateChart(
+                charts[chart.id],
+                resagg,
+                chart.axex,
+                chart.expression
+              );
+            }
+            errorMsg = undefined;
+          })
+          .catch((err) => {
+            // errorMsg = `Pas d'enregistrement pour le champ ${config.axex} (${err.message})`;
+            console.error(
+              `Pas d'enregistrement pour le champ ${config.axex} (${err.message})`
             );
-          } else {
-            chartUtilities.updateChart(
-              charts[chart.id],
-              resagg,
-              chart.axex,
-              chart.expression
-            );
-          }
-          errorMsg = undefined;
-        })
-        .catch((err) => {
-          // errorMsg = `Pas d'enregistrement pour le champ ${config.axex} (${err.message})`;
-          console.error(
-            `Pas d'enregistrement pour le champ ${config.axex} (${err.message})`
-          );
-          records = [];
-        });
-    });
-  
+            records = [];
+          });
+      });
     
+      config.kpis.forEach((kpi) => {
       ods
-        .getAggregates(
-          config.domainid,
-          config.datasetid,
-          search,
-          config.kpi.groupBy,
-          activeFilter,
-          config.kpi.expression
-        )
-        .then((reskpi) => {
-          myKpi = reskpi.records;
-          console.log(myKpi);
-          title = config.kpi.title;
-          errorMsg = undefined;
-        })
-        .catch((err) => {
-          // errorMsg = `Pas d'enregistrement pour le champ ${filter} (${err.message})`;
-          console.error(`Pas d'enregistrement pour le champ ${kpi} (${err.message})`);
-          records = [];
-        });
-  }, 500);
-
-  const seeNext = async () => {
-    ods
-      .getNext(links)
-      .then((res) => {
-        records = res.records;
-        links = res.links;
+      .getAggregates(
+      config.domainid,
+      config.datasetid,
+      search,
+      kpi.groupBy,
+      activeFilter,
+      kpi.expression
+      )
+      .then((reskpi) => {
+        mykpis[kpi.id] = reskpi.records[0].record.fields.serie;
         errorMsg = undefined;
       })
       .catch((err) => {
-        // errorMsg = `DatasetID introuvable ou erreur de connexion (${err.message})`;
-        console.error(`DatasetID introuvable ou erreur de connexion (${err.message})`);
-        records = [];
-        links = [];
+        // errorMsg = `Pas d'enregistrement pour le champ ${filter} (${err.message})`;
+        console.error(`Pas de kpi pour l'expression ${kpi.expression} (${err.message})`);
+        delete mykpis[kpi.title];
       });
-  };
+    }); 
+    }, 500);
 
-  onMount(() => {
-    debouncedRefresh();
-  });
 
-  const manageFilter = (event) => {
-    if (event.detail) {
-      let id = Object.keys(event.detail)[0];
-      activeFilter[id] = event.detail[id];
-    }
-    debouncedRefresh();
-  };
-  const manageClear = (id) => {};
+    const seeNext = async () => {
+      ods
+        .getNext(links)
+        .then((res) => {
+          records = res.records;
+          links = res.links;
+          errorMsg = undefined;
+        })
+        .catch((err) => {
+          // errorMsg = `DatasetID introuvable ou erreur de connexion (${err.message})`;
+          console.error(`DatasetID introuvable ou erreur de connexion (${err.message})`);
+          records = [];
+          links = [];
+        });
+    };
+    onMount(() => {
+      debouncedRefresh();
+    });
+    const manageFilter = (event) => {
+      if (event.detail) {
+        let id = Object.keys(event.detail)[0];
+        activeFilter[id] = event.detail[id];
+      }
+      debouncedRefresh();
+    };
+    const manageClear = (id) => {};
 </script>
 
 <div class="container mx-auto mt-6">
@@ -177,13 +171,15 @@
     {errorMsg}
   {/if}
   <div class="kpi-container">
-    {#each myKpi as kpi}
-      <h1>
-        {kpi.record.fields.serie}
-      </h1>
-      <p>{title}</p>
-      {/each}
+  {#each config.kpis as kpi}
+  <div class="kpi-box">
+    <h1>
+      {mykpis[kpi.id]}
+    </h1>
+    <p>{kpi.title}</p>
   </div>
+  {/each}
+</div>
   <div class="chart-container">
     {#each config.charts as chart}
       {chart.id}
@@ -222,13 +218,19 @@
   }
 
   .kpi-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .kpi-box {
     background-color: #FFF;
-    margin: 0 auto;
-     width: 250px; 
      border-radius: 5px;
     padding: 40px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin: 10px;
+    min-width: 250px;
   }
 </style>
