@@ -30,7 +30,9 @@
   <a on:click={childSeeNext}>See next 10 results</a>
 {/if}
 
-<style>
+<style lang="scss">
+  @import "../styles/variables";
+
   .grid {
     grid-template-columns: repeat(3, auto);
     grid-gap: 20px;
@@ -44,10 +46,6 @@
   }
 
   .box {
-    border: 1px solid rgba(0, 0, 0, 0.24);
-    padding: 20px;
-    border-radius: 5px;
-    background: #fff;
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    @include box-small;
   }
 </style>

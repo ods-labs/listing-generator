@@ -1,0 +1,27 @@
+$radius: 6px;
+$box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+$content-bg: white;
+
+
+@mixin box-common-styles {
+    padding: 10px 25px;
+    border-radius: $radius;
+    background: $content-bg;
+    box-shadow: $box-shadow;
+}
+
+@mixin box-small {
+    @include box-common-styles;
+}
+
+@mixin box-large {
+    @include box-common-styles;
+    padding: 20px 35px;
+}
+
+@mixin flexspaced {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}

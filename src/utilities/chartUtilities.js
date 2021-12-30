@@ -30,11 +30,8 @@ const createChart = (chartId, resagg, title, axex, chartType) => {
             }, ],
         },
         options: {
-            scales: {
-                y: {
-                    beginAtZero: true,
-                },
-            },
+            responsive: true,
+            maintainAspectRatio: false
         },
     });
     // console.log(myChart);
