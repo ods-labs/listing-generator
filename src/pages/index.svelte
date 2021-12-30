@@ -108,7 +108,6 @@
           myKpi = reskpi.records;
           console.log(myKpi);
           title = config.kpi.title;
-          // value = myKpi.map(e => e.record.fields.serie);
           errorMsg = undefined;
         })
         .catch((err) => {
@@ -223,6 +222,13 @@
   }
 
   .kpi-container {
-    background-color: red;
+    background-color: #FFF;
+    margin: 0 auto;
+     width: 250px; 
+     border-radius: 5px;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 </style>
