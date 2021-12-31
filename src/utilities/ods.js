@@ -1,4 +1,5 @@
-import { ApiClient, fromCatalog } from '@opendatasoft/api-client';
+import { ApiClient } from '../../../ods-dataviz-sdk/packages/api-client/src/client';
+import { fromCatalog } from '../../../ods-dataviz-sdk/packages/api-client/src/odsql';
 
 const getDatasets = async(domainid) => {
     if (!domainid) return { datasets: [] };
@@ -18,6 +19,24 @@ const getRecords = async(domainid, datasetid, search = "", refine = {}) => {
     // refine : { 'fieldid' : 'valeur du refine' }
     const client = new ApiClient({ domain: domainid });
     let query = fromCatalog().dataset(datasetid).records().limit(40);
+    let keys = Object.keys(refine);
+    for (let i = 0; i < keys.length; i += 1) {
+        query = query.refine(`${keys[i]}:"${refine[keys[i]]}"`);
+    }
+    if (search) {
+        query = query.where(`"${search}"`)
+    }
+    return client.get(query)
+        .then(res => res)
+        .catch(err => {
+            throw err;
+        });
+};
+
+const getGeojson = async(domainid, datasetid, search = "", refine = {}, limit = 100) => {
+    // refine : { 'fieldid' : 'valeur du refine' }
+    const client = new ApiClient({ domain: domainid });
+    let query = fromCatalog().dataset(datasetid).exports('geojson').limit(limit);
     let keys = Object.keys(refine);
     for (let i = 0; i < keys.length; i += 1) {
         query = query.refine(`${keys[i]}:"${refine[keys[i]]}"`);
@@ -116,4 +135,4 @@ const getNext = async(links) => {
         });
 }
 
-export default { getRecords, getDatasets, getNext, getFilterCategories, getAggregates, getKpis }
+export default { getRecords, getDatasets, getGeojson, getNext, getFilterCategories, getAggregates, getKpis }

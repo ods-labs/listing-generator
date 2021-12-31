@@ -1,7 +1,7 @@
 {
     "domainid": "public",
     "datasetid": "res_equipements_2017",
-    "filters": ["gestiontypeproprietaireprinclib", "equipementtypelib"],
+    "filters": ["deplib", "gestiontypeproprietaireprinclib", "equipementtypelib"],
     "fieldTitle": "insnom",
     "fieldCoordinates": "coordonnees",
     "fieldList": [{
