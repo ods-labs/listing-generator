@@ -10,7 +10,7 @@
       {#each config.fieldList as field}
       <th>{field.title}</th>
       {/each}
-      <th></th>
+      <th>Localisation</th>
     </tr>
   </thead>
   <tbody>
@@ -21,7 +21,7 @@
       {/each}
       <td>
         {#if record.record.fields[config.fieldCoordinates]}
-        <a href="https://www.google.com/maps/search/{record.record.fields[config.fieldCoordinates].lat},{record.record.fields[config.fieldCoordinates].lon}" target="_blank">L</a>
+        <a href="https://www.google.com/maps/search/{record.record.fields[config.fieldCoordinates].lat},{record.record.fields[config.fieldCoordinates].lon}" target="_blank">Ouvrir dans Google Maps</a>
         {/if}
       </td>
     </tr>

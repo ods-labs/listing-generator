@@ -49,17 +49,17 @@
                 config.domainid,
                 config.datasetid,
                 search,
-                filter,
+                filter.id,
                 activeFilter
             ).then((rescat) => {
                 category = rescat.records;
-                categories[filter] = category.map((e) => e.record.fields);
+                categories[filter.id] = category.map((e) => e.record.fields);
                 // console.log(categories[filter]);
                 errorMsg = undefined;
             })
                 .catch((err) => {
                     // errorMsg = `Pas d'enregistrement pour le champ ${filter} (${err.message})`;
-                    console.error(`Pas d'enregistrement pour le champ ${filter} (${err.message})`);
+                    console.error(`Pas d'enregistrement pour le champ ${filter.id} (${err.message})`);
                 });
         });
     }, 500);
@@ -77,22 +77,22 @@
             {#each config.filters as filter}
                 <Select
                         showChevron={true}
-                        placeholder={`Sélectionnez un ${filter}`}
-                        items={categories[filter]}
-                        optionIdentifier={filter}
-                        getOptionLabel={(option) => option[filter]}
-                        getSelectionLabel={(option) => option[filter]}
+                        placeholder={`Sélectionnez un ${filter.title}`}
+                        items={categories[filter.id]}
+                        optionIdentifier={filter.id}
+                        getOptionLabel={(option) => option[filter.id]}
+                        getSelectionLabel={(option) => option[filter.id]}
                         on:select={function moncallbackrefine(event) {
-                                    if (event.detail) {
-                                      let id = Object.keys(event.detail)[0];
-                                      activeFilter[id] = event.detail[id];
-                                    }
-                                    debouncedRefresh();
-                                  }}
+        if (event.detail) {
+          let id = Object.keys(event.detail)[0];
+          activeFilter[id] = event.detail[id];
+        }
+        debouncedRefresh();
+      }}
                         on:clear={function moncallbackdevenement(event) {
-                                    delete activeFilter[filter];
-                                    debouncedRefresh();
-                                  }}/>
+        delete activeFilter[filter.id];
+        debouncedRefresh();
+      }} />
             {/each}
         </div>
     </div>

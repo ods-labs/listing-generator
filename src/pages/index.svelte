@@ -16,8 +16,7 @@
   let categories = {};
   let activeFilter = {};
   let category = [];
-  let mykpis = {};
-  
+  let mykpis = {};  
   
   const debouncedRefresh = debounce(async () => {
     ods
@@ -36,18 +35,18 @@
       config.domainid,
       config.datasetid,
       search,
-      filter,
+      filter.id,
       activeFilter
       )
       .then((rescat) => {
         category = rescat.records;
-        categories[filter] = category.map((e) => e.record.fields);
+        categories[filter.id] = category.map((e) => e.record.fields);
         // console.log(categories[filter]);
         errorMsg = undefined;
       })
       .catch((err) => {
         // errorMsg = `Pas d'enregistrement pour le champ ${filter} (${err.message})`;
-        console.error(`Pas d'enregistrement pour le champ ${filter} (${err.message})`);
+        console.error(`Pas d'enregistrement pour le champ ${filter.id} (${err.message})`);
         records = [];
       });
     });
@@ -109,8 +108,7 @@
         console.error(`Pas de kpi pour l'expression ${kpi.expression} (${err.message})`);
         delete mykpis[kpi.title];
       });
-    }); 
-    
+    });     
   }, 500);
   
 
@@ -138,11 +136,11 @@
       {#each config.filters as filter}
       <Select
       showChevron={true}
-      placeholder={`Sélectionnez un ${filter}`}
-      items={categories[filter]}
-      optionIdentifier={filter}
-      getOptionLabel={(option) => option[filter]}
-      getSelectionLabel={(option) => option[filter]}
+      placeholder={`Sélectionnez un ${filter.title}`}
+      items={categories[filter.id]}
+      optionIdentifier={filter.id}
+      getOptionLabel={(option) => option[filter.id]}
+      getSelectionLabel={(option) => option[filter.id]}
       on:select={function moncallbackrefine(event) {
         if (event.detail) {
           let id = Object.keys(event.detail)[0];
@@ -151,7 +149,7 @@
         debouncedRefresh();
       }}
       on:clear={function moncallbackdevenement(event) {
-        delete activeFilter[filter];
+        delete activeFilter[filter.id];
         debouncedRefresh();
       }} />
       {/each}
@@ -188,8 +186,15 @@
 
   .search-container {
     display: flex;
-    gap: 10px;
+    gap: 20px;
     margin-bottom: 40px;
+    flex-direction: row;
+    align-items: center;
+  }
+  @media (max-width: 767px) {
+    .search-container, .select-buttons {
+      flex-direction: column;
+    }
   }
   
   .select-buttons {
@@ -218,8 +223,11 @@
   }
   
   .kpi-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    padding: 0px 15%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    width: 100%;
+    gap: 10px;
+    margin: 20px 0;
   }
 </style>

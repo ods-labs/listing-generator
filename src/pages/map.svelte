@@ -101,6 +101,7 @@
     }
 
     let clickFeature, clickResolution;
+
     /**
      * Style for clusters with features that are too close to each other, activated on click.
      * @param {Feature} cluster A cluster with overlapping members.
@@ -171,6 +172,7 @@
     }
 
     let hoverFeature;
+
     /**
      * Style for convex hulls of clusters, activated on hover.
      * @param {Feature} cluster The cluster feature.
@@ -232,7 +234,9 @@
                     map.removeLayer(clusterCircles);
 
                 vectorSource = new VectorSource({
-                    features: geojsonFeatures.filter((feature) => {return feature.getGeometry()})
+                    features: geojsonFeatures.filter((feature) => {
+                        return feature.getGeometry()
+                    })
                 })
                 clusterSource = new Cluster({
                     distance: 35,
@@ -275,17 +279,17 @@
                 config.domainid,
                 config.datasetid,
                 search,
-                filter,
+                filter.id,
                 activeFilter
             ).then((rescat) => {
                 category = rescat.records;
-                categories[filter] = category.map((e) => e.record.fields);
+                categories[filter.id] = category.map((e) => e.record.fields);
                 // console.log(categories[filter]);
                 errorMsg = undefined;
             })
                 .catch((err) => {
                     // errorMsg = `Pas d'enregistrement pour le champ ${filter} (${err.message})`;
-                    console.error(`Pas d'enregistrement pour le champ ${filter} (${err.message})`);
+                    console.error(`Pas d'enregistrement pour le champ ${filter.id} (${err.message})`);
                 });
         });
     }, 500);
@@ -308,47 +312,51 @@
         });
 
         map.on('pointermove', (event) => {
-            clusters.getFeatures(event.pixel).then((features) => {
-                if (features[0] !== hoverFeature) {
-                    // Display the convex hull on hover.
-                    hoverFeature = features[0];
-                    clusterHulls.setStyle(clusterHullStyle);
-                    // Change the cursor style to indicate that the cluster is clickable.
-                    map.getTargetElement().style.cursor =
-                        hoverFeature && hoverFeature.get('features').length > 1
-                            ? 'pointer'
-                            : '';
-                }
-            });
+            if (clusters) {
+                clusters.getFeatures(event.pixel).then((features) => {
+                    if (features[0] !== hoverFeature) {
+                        // Display the convex hull on hover.
+                        hoverFeature = features[0];
+                        clusterHulls.setStyle(clusterHullStyle);
+                        // Change the cursor style to indicate that the cluster is clickable.
+                        map.getTargetElement().style.cursor =
+                            hoverFeature && hoverFeature.get('features').length > 1
+                                ? 'pointer'
+                                : '';
+                    }
+                });
+            }
         });
 
         map.on('click', (event) => {
-            clusters.getFeatures(event.pixel).then((features) => {
-                if (features.length > 0) {
-                    const clusterMembers = features[0].get('features');
-                    if (clusterMembers.length > 1) {
-                        // Calculate the extent of the cluster members.
-                        const extent = createEmpty();
-                        clusterMembers.forEach((feature) =>
-                            extend(extent, feature.getGeometry().getExtent())
-                        );
-                        const view = map.getView();
-                        const resolution = map.getView().getResolution();
-                        if (
-                            view.getZoom() === view.getMaxZoom() ||
-                            (getWidth(extent) < resolution && getWidth(extent) < resolution)
-                        ) {
-                            // Show an expanded view of the cluster members.
-                            clickFeature = features[0];
-                            clickResolution = resolution;
-                            clusterCircles.setStyle(clusterCircleStyle);
-                        } else {
-                            // Zoom to the extent of the cluster members.
-                            view.fit(extent, {duration: 500, padding: [50, 50, 50, 50]});
+            if (clusters) {
+                clusters.getFeatures(event.pixel).then((features) => {
+                    if (features.length > 0) {
+                        const clusterMembers = features[0].get('features');
+                        if (clusterMembers.length > 1) {
+                            // Calculate the extent of the cluster members.
+                            const extent = createEmpty();
+                            clusterMembers.forEach((feature) =>
+                                extend(extent, feature.getGeometry().getExtent())
+                            );
+                            const view = map.getView();
+                            const resolution = map.getView().getResolution();
+                            if (
+                                view.getZoom() === view.getMaxZoom() ||
+                                (getWidth(extent) < resolution && getWidth(extent) < resolution)
+                            ) {
+                                // Show an expanded view of the cluster members.
+                                clickFeature = features[0];
+                                clickResolution = resolution;
+                                clusterCircles.setStyle(clusterCircleStyle);
+                            } else {
+                                // Zoom to the extent of the cluster members.
+                                view.fit(extent, {duration: 500, padding: [50, 50, 50, 50]});
+                            }
                         }
                     }
-                }
-            });
+                });
+            }
         });
 
         debouncedRefresh();
@@ -363,22 +371,22 @@
             {#each config.filters as filter}
                 <Select
                         showChevron={true}
-                        placeholder={`Sélectionnez un ${filter}`}
-                        items={categories[filter]}
-                        optionIdentifier={filter}
-                        getOptionLabel={(option) => option[filter]}
-                        getSelectionLabel={(option) => option[filter]}
+                        placeholder={`Sélectionnez un ${filter.title}`}
+                        items={categories[filter.id]}
+                        optionIdentifier={filter.id}
+                        getOptionLabel={(option) => option[filter.id]}
+                        getSelectionLabel={(option) => option[filter.id]}
                         on:select={function moncallbackrefine(event) {
-                                    if (event.detail) {
-                                      let id = Object.keys(event.detail)[0];
-                                      activeFilter[id] = event.detail[id];
-                                    }
-                                    debouncedRefresh();
-                                  }}
+        if (event.detail) {
+          let id = Object.keys(event.detail)[0];
+          activeFilter[id] = event.detail[id];
+        }
+        debouncedRefresh();
+      }}
                         on:clear={function moncallbackdevenement(event) {
-                                    delete activeFilter[filter];
-                                    debouncedRefresh();
-                                  }}/>
+        delete activeFilter[filter.id];
+        debouncedRefresh();
+      }}/>
             {/each}
         </div>
     </div>
