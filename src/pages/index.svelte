@@ -188,8 +188,15 @@
 
   .search-container {
     display: flex;
-    gap: 10px;
+    gap: 20px;
     margin-bottom: 40px;
+    flex-direction: row;
+    align-items: center;
+  }
+  @media (max-width: 767px) {
+    .search-container, .select-buttons {
+      flex-direction: column;
+    }
   }
   
   .select-buttons {

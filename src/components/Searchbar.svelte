@@ -19,11 +19,11 @@
 <style lang="scss">
 
   .search-box {
-    margin-right: 10px;
-    border: var(--border, 1px solid #d8dbdf);
-    height: 40px;
+    height: 42px;
     input {
-      height: 40px;
+      height: 42px;
+      border: var(--border, 1px solid #d8dbdf);
+      font-size: var(--inputFontSize, 14px);
     }
   }
 </style>
