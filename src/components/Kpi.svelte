@@ -16,14 +16,10 @@
     @import "../styles/variables";
 
     .kpi {
-        margin: 0 auto;
-        width: 250px; 
-        
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-
         @include box-large;
     }
 </style>

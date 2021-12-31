@@ -218,8 +218,11 @@
   }
   
   .kpi-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    padding: 0px 15%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    width: 100%;
+    gap: 10px;
+    margin: 20px 0;
   }
 </style>

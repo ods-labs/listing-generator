@@ -37,28 +37,34 @@
             "expression": "count(*)"
         },
         {
-            "title": "Répartition par gestionnaire et nombre de vestiaires",
-            "axex": "gestiontypeproprietaireprinclib",
+            "title": "Répartition par nature d'équipement et nombre de vestiaires",
+            "axex": "naturelibelle",
             "id": "myChart2",
             "type": "pie",
             "expression": "sum(equnbvestiairespo)"
         },
         {
-            "title": "Répartition par accès handi et nombre moyen de couloirs de piste",
+            "title": "Répartition par accès handi",
             "axex": "equacceshandimaire",
             "id": "myChart3",
             "type": "line",
-            "expression": "avg(equnbcouloirpiste)"
+            "expression": "count(*)"
         }
     ],
     "kpis": [{
-        "id": "myKpi1",
-        "title": "Total équipements",
-        "expression": "count(*)"
-    },
-    {
-        "id": "myKpi2",
-        "title": "Nombre de vestiaires",
-        "expression": "sum(equnbvestiairespo)"
-    }]
+            "id": "myKpi1",
+            "title": "Total équipements",
+            "expression": "count(*)"
+        },
+        {
+            "id": "myKpi2",
+            "title": "Nombre de vestiaires",
+            "expression": "sum(equnbvestiairespo)"
+        },
+        {
+            "id": "myKpi3",
+            "title": "Nombre de places en tribune",
+            "expression": "sum(equnbplacetribune)"
+        }
+    ]
 }
