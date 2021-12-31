@@ -28,6 +28,7 @@
     },
     "dependencies": {
         "chart.js": "^3.6.1",
+        "monotone-chain-convex-hull": "^1.0.0",
         "svelte-select": "^4.4.6"
     }
 }
