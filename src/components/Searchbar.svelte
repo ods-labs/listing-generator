@@ -10,7 +10,10 @@
 </script>
 
 <label class="search-box">
-  <input type="text" bind:value={search} on:input={childDebounced} />
+  <input type="text" 
+         placeholder="Recherchez..."
+         bind:value={search} 
+         on:input={childDebounced} />
 </label>
 
 <style lang="scss">

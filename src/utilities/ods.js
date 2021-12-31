@@ -17,7 +17,7 @@ const getDatasets = async(domainid) => {
 const getRecords = async(domainid, datasetid, search = "", refine = {}) => {
     // refine : { 'fieldid' : 'valeur du refine' }
     const client = new ApiClient({ domain: domainid });
-    let query = fromCatalog().dataset(datasetid).records().limit(12);
+    let query = fromCatalog().dataset(datasetid).records().limit(40);
     let keys = Object.keys(refine);
     for (let i = 0; i < keys.length; i += 1) {
         query = query.refine(`${keys[i]}:"${refine[keys[i]]}"`);
@@ -70,6 +70,29 @@ const getAggregates = async(domainid, datasetid, search = "", field, refine = {}
     }
     if (field) {
         query = query.groupBy(field);
+    }
+    
+    return client.get(query)
+        .then(res => res)
+        .catch(err => {
+            throw err;
+        });
+};
+
+const getKpis = async(domainid, datasetid, search = "", id, field, refine = {}, expression) => {
+    const client = new ApiClient({ domain: domainid });
+    let query = fromCatalog()
+        .dataset(datasetid)
+        .records()
+        .select(expression + " as " + id)
+        .groupBy(field)
+        .orderBy(expression)
+    let keys = Object.keys(refine);
+    for (let i = 0; i < keys.length; i += 1) {
+        query = query.refine(`${keys[i]}:"${refine[keys[i]]}"`);
+    }
+    if (search) {
+        query = query.where(`"${search}"`);
     }
     return client.get(query)
         .then(res => res)

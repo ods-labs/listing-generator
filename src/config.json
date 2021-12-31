@@ -52,14 +52,13 @@
         }
     ],
     "kpis": [{
-            "id": "myKpi1",
-            "title": "Total équipements",
-            "expression": "count(*)"
-        },
-        {
-            "id": "myKpi2",
-            "title": "Nombre de vestiaires",
-            "expression": "sum(equnbvestiairespo)"
-        }
-    ]
+        "id": "myKpi1",
+        "title": "Total équipements",
+        "expression": "count(*)"
+    },
+    {
+        "id": "myKpi2",
+        "title": "Nombre de vestiaires",
+        "expression": "sum(equnbvestiairespo)"
+    }]
 }
