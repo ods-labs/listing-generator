@@ -1,7 +1,15 @@
 {
     "domainid": "public",
     "datasetid": "res_equipements_2017",
-    "filters": ["gestiontypeproprietaireprinclib", "equipementtypelib"],
+    "filters": [{
+            "id": "gestiontypeproprietaireprinclib",
+            "title": "gestionnaire"
+        },
+        {
+            "id": "equipementtypelib",
+            "title": "type d'équipement"
+        }
+    ],
     "fieldTitle": "insnom",
     "fieldCoordinates": "coordonnees",
     "fieldList": [{
