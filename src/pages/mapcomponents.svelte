@@ -17,6 +17,7 @@
     import Map from "../components/Map.svelte";
     import MapView from "../components/MapView.svelte";
     import MapTileLayer from "../components/MapTileLayer.svelte";
+    import DataLayer from "../components/DataLayer.svelte";
 
     let loading = false;
     let errorMsg;
@@ -26,23 +27,18 @@
     let activeFilter = {};
     let category = [];
 
-    let geojsonFeatures = [];
+    let geojson;
 
     const debouncedRefresh = debounce(async () => {
-        geojsonFeatures = [];
         loading = true;
         ods.getGeojson(config.domainid, config.datasetid, search, activeFilter, 500)
             .then((res) => {
-                geojsonFeatures = new GeoJSON().readFeatures(res, {
-                    dataProjection: "EPSG:4326",
-                    featureProjection: "EPSG:3857"
-                });
+                geojson = res;
                 errorMsg = undefined;
             })
             .catch((err) => {
                 errorMsg = `Pas d'enregistrement (${err.message})`;
                 console.error(err);
-                geojsonFeatures = [];
             })
             .finally(() => {
                 loading = false;
@@ -105,6 +101,7 @@
         <Map>
             <MapView initialCenterLonLat={[2.0, 48.0]} initialZoom="6"></MapView>
             <MapTileLayer></MapTileLayer>
+            <DataLayer data={geojson}></DataLayer>
         </Map>
         <Spinner spin={loading}></Spinner>
     </div>
