@@ -18,8 +18,7 @@
   let categories = {};
   let activeFilter = {};
   let category = [];
-  let mykpis = {};
-  
+  let mykpis = {};  
   
   const debouncedRefresh = debounce(async () => {
     ods
@@ -111,8 +110,7 @@
         console.error(`Pas de kpi pour l'expression ${kpi.expression} (${err.message})`);
         delete mykpis[kpi.title];
       });
-    }); 
-    
+    });     
   }, 500);
   
 
