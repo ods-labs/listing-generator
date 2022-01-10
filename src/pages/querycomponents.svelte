@@ -1,35 +1,38 @@
 <script>
-    import Table from "../components/Table.svelte";
-    import OdsRecords from "../components/OdsRecords.svelte";
-    import config from "../config.json";
-    import OdsSearchbar from "../components/OdsSearchbar.svelte";
-    import OdsFacet from "../components/OdsFacet.svelte";
+  import Table from "../components/Table.svelte";
+  import OdsRecords from "../components/OdsRecords.svelte";
+  import config from "../config.json";
+  import OdsSearchbar from "../components/OdsSearchbar.svelte";
+  import OdsFacet from "../components/OdsFacet.svelte";
 
-    let search;
-    let records = [];
-    let facets = {};
-    let refines = {};
 
+  let search;
+  let records = [];
+  let facets = {};
+  let refines = {};
 </script>
 
 <div class="container mx-auto mt-6">
-    <div class="search-container">
-        <OdsSearchbar bind:search={search}/>
-        <div class="select-buttons">
-            {#each config.filters as filter}
-                <OdsFacet search={search}
-                          field={filter.id}
-                          placeholder={`Sélectionnez un ${filter.title}`}
-                          bind:refines={refines}
-                          bind:facets={facets}/>
-            {/each}
-        </div>
+  <div class="search-container">
+    <OdsSearchbar bind:search />
+    <div class="select-buttons">
+      {#each config.filters as filter}
+        <OdsFacet
+          {search}
+          field={filter.id}
+          placeholder={`Sélectionnez un ${filter.title}`}
+          bind:refines
+          bind:facets />
+      {/each}
     </div>
-    <OdsRecords search={search} refines={refines} bind:records/>
-    <Table records={records}/>
+  </div>
+  <OdsRecords {search} {refines} bind:records />
+  <Table {records} ref="smalltable" />
+
 </div>
 
 <style lang="scss">
+
   @import "../styles/variables";
 
   .container {
@@ -45,7 +48,8 @@
   }
 
   @media (max-width: 767px) {
-    .search-container, .select-buttons {
+    .search-container,
+    .select-buttons {
       flex-direction: column;
     }
   }

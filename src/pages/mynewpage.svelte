@@ -17,26 +17,32 @@
 </div>
 
 <div class="container mx-auto">
-      <div class="bloc">
-  <OdsRecords {search} {refines} bind:records />
+  <div class="bloc">
+    <OdsRecords {search} {refines} bind:records />
 
-  <Table {records} />
+    <Table {records} customCSS="small-table" />
+    <Table {records} />
+
     <div class="search-tools">
-        <OdsSearchbar bind:search />
+      <OdsSearchbar bind:search />
 
-        {#each config.filters as filter}
-            <OdsFacet search={search}
-                      field={filter.id}
-                      placeholder={`Sélectionnez un ${filter.title}`}
-                      bind:refines={refines}
-                      bind:facets={facets}/>
-        {/each}
+      {#each config.filters as filter}
+        <OdsFacet
+          {search}
+          field={filter.id}
+          placeholder={`Sélectionnez un ${filter.title}`}
+          bind:refines
+          bind:facets />
+      {/each}
     </div>
-</div>
-
+  </div>
 </div>
 
 <style lang="scss">
+  :global([customCSS="small-table"]) {
+    color: green;
+  }
+
   body {
     margin-top: 0px;
   }
@@ -78,9 +84,8 @@
   }
 
   .search-tools {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
   }
 </style>

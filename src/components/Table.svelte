@@ -1,9 +1,10 @@
 <script>
   import config from "../config.json";
   export let records;
+  export let customCSS;
 </script>
 
-<div class="table-module">
+<div class="table-module" {customCSS}>
   <table class="table-basic">
   <thead>
     <tr>
