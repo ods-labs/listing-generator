@@ -8,7 +8,7 @@
     import Searchbar from "../components/Searchbar.svelte";
     import {onMount} from "svelte";
 
-    import {Feature, Map, View} from 'ol';
+    import {Feature, Map, Overlay, View} from 'ol';
     import TileLayer from 'ol/layer/Tile';
     import OSM from 'ol/source/OSM';
     import VectorLayer from "ol/layer/Vector";
@@ -41,6 +41,11 @@
     let clusterCircles;
     let clusterHulls;
     let clusters;
+
+    let overlay;
+    let tooltip;
+    let tooltipCloseButton;
+    let tooltipContent;
 
     const circleDistanceMultiplier = 1;
     const circleFootSeparation = 28;
@@ -81,6 +86,7 @@
         color: 'rgb(13, 81, 153)',
         width: 2.5,
     });
+
 
     /**
      * Single feature style, users for clusters with 1 feature and cluster circles.
@@ -294,11 +300,18 @@
         });
     }, 500);
 
+    function setPopup(event, feature) {
+        const clickCoordinates = event.coordinates;
+        tooltipContent.innerHTML = `<h3>${feature.get('insnom')}</h3><br/><p>${feature.get('equnom')}</p>`;
+        overlay.setPosition(clickCoordinates);
+        console.log(tooltip);
+    }
+
     onMount(() => {
         mapView = new View({
             center: fromLonLat([2.0, 48.0]),
             zoom: 7,
-            maxZoom: 18
+            maxZoom: 13
         })
 
         map = new Map({
@@ -353,6 +366,8 @@
                                 // Zoom to the extent of the cluster members.
                                 view.fit(extent, {duration: 500, padding: [50, 50, 50, 50]});
                             }
+                        } else {
+                            setPopup(event, clusterMembers[0])
                         }
                     }
                 });
@@ -360,6 +375,23 @@
         });
 
         debouncedRefresh();
+
+        overlay = new Overlay({
+            element: tooltip,
+            autoPan: {
+                animation: {
+                    duration: 250,
+                },
+            },
+        });
+
+        map.addOverlay(overlay);
+
+        tooltipCloseButton.onclick = function () {
+            overlay.setPosition(undefined);
+            tooltipCloseButton.blur();
+            return false;
+        };
     });
 </script>
 
@@ -394,6 +426,13 @@
     <div class="map-container">
         <div id="map"></div>
         <Spinner spin={loading}></Spinner>
+    </div>
+
+    <div class="ol-popup" bind:this={tooltip}>
+        <a href="#" class="ol-popup-closer" bind:this={tooltipCloseButton}></a>
+        <div bind:this={tooltipContent}>
+            Overlay content
+        </div>
     </div>
 </div>
 

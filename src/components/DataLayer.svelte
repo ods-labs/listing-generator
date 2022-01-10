@@ -13,6 +13,7 @@
         features: vectorFeatures
     })
     let vectorLayer = new VectorLayer({
+        zIndex: 1,
         source: vectorSource
     })
 

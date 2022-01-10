@@ -18,6 +18,12 @@
     import MapView from "../components/MapView.svelte";
     import MapTileLayer from "../components/MapTileLayer.svelte";
     import DataLayer from "../components/DataLayer.svelte";
+    import LayerSwitcher from "../components/LayerSwitcher.svelte";
+    import MapboxStyleLayer from "../components/MapboxStyleLayer.svelte";
+    import Overlay from "../components/Overlay.svelte";
+
+    const esri_basemap_url = 'https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}'
+    const jawgstyle = "https://api.jawg.io/styles/jawg-light.json?access-token=4cKtE4Rze1HrvxWa9a7mdolSk10lVThTFC8zadQYMIMxTjkpTeIDJAAmhReDGnCH";
 
     let loading = false;
     let errorMsg;
@@ -99,9 +105,20 @@
 
     <div class="map-container">
         <Map>
+            <!-- View -->
             <MapView initialCenterLonLat={[2.0, 48.0]} initialZoom="6"></MapView>
-            <MapTileLayer></MapTileLayer>
+
+            <!-- Basemaps -->
+            <MapboxStyleLayer title="Jawg light" style={jawgstyle} />
+            <MapTileLayer title="OSM default"></MapTileLayer>
+            <MapTileLayer title="ESRI" source={esri_basemap_url} />
+            <LayerSwitcher />
+
+            <!-- Data -->
             <DataLayer data={geojson}></DataLayer>
+
+            <!-- Popup -->
+            <Overlay title="equnom" />
         </Map>
         <Spinner spin={loading}></Spinner>
     </div>
