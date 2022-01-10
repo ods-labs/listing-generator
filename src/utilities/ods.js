@@ -1,5 +1,5 @@
-import {ApiClient} from '../../../ods-dataviz-sdk/packages/api-client/src/client';
-import {fromCatalog} from '../../../ods-dataviz-sdk/packages/api-client/src/odsql';
+import {ApiClient} from '@opendatasoft/api-client/src/client';
+import {fromCatalog} from '@opendatasoft/api-client/src/odsql';
 
 const getDatasets = async (domainid) => {
     if (!domainid) return {datasets: []};
