@@ -1,6 +1,6 @@
 <script>
   import config from "../config.json";
-  export let records;
+  export let records = [];
   export let customCSS;
 </script>
 
