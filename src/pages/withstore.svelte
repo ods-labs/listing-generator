@@ -6,6 +6,7 @@
 
     let data = new DatasetStore(config.domainid, config.datasetid);
     let records = data.getRecordsStore();
+    let naturelibelles = data.getFacetStore("naturelibelle");
 </script>
 
 <div class="container mx-auto mt-6">
@@ -18,6 +19,13 @@
     <Select showChevron={true}
             items={['Découvert','Intérieur']}
             on:select={(event) => { event.detail ? data.refine("naturelibelle", event.detail.value) : ''}}/>
+    <Select showChevron={true}
+            placeholder={"Nature libellé"}
+            items={$naturelibelles}
+            optionIdentifier="name"
+            labelIdentifier="name"
+            on:select={(event) => { event.detail ? data.refine("naturelibelle", event.detail.value) : ''}}
+            on:clear={(event) => { data.unrefine("naturelibelle")}}/>
 
     <Table records={$records} ref="smalltable"/>
 </div>
