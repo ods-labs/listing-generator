@@ -19,16 +19,16 @@
             zoom: 5.5,
             center: [2.700748,46.893575]
         })
+    }
+
+    onMount(() => {
+        initMap(mapHTMLElement);
 
         return {
             destroy() {
                 map.destroy();
             }
         };
-    }
-
-    onMount(() => {
-        initMap(mapHTMLElement);
     })
 </script>
 
