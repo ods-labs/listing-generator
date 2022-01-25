@@ -1,24 +1,29 @@
 <script>
-    import {getContext, onMount} from "svelte";
+    import {getContext, onMount, setContext} from "svelte";
 
     export let name;
+    export let type = 'circle';
+    export let paint = {
+        'circle-color': '#11b4da',
+        'circle-radius': 6,
+        'circle-stroke-width': 2,
+        'circle-stroke-color': '#000000'
+    };
+
     const { getMap } = getContext('map');
     let { source } = getContext('source');
-    let map;
+    setContext('layer', { layer: name});
+    let map = getMap();
+    let layerCreated = false;
 
     onMount(() => {
-        map = getMap();
         map.addLayer({
             id: name,
-            type: 'circle',
+            type,
             source: source,
-            paint: {
-                'circle-color': '#11b4da',
-                'circle-radius': 6,
-                'circle-stroke-width': 2,
-                'circle-stroke-color': '#000000'
-            }
+            paint
         });
+        layerCreated = true;
 
         return () => {
             if (map.getLayer(name)) {
@@ -27,3 +32,7 @@
         }
     });
 </script>
+
+{#if layerCreated}
+    <slot />
+{/if}
