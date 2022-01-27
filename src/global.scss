@@ -32,3 +32,12 @@ a {
 
 @tailwind components;
 @tailwind utilities;
+
+.ol-control.layer-switcher {
+    bottom: 10px;
+    left: 10px;
+
+    button {
+        display: none;
+    }
+}

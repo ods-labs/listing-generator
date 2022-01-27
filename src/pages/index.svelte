@@ -1,12 +1,10 @@
 <script>
-  import { url } from "@roxi/routify";
   import ods from "../utilities/ods";
   import chartUtilities from "../utilities/chartUtilities";
   import { debounce } from "lodash";
   import config from "../config.json";
   import Select from "svelte-select";
   import Searchbar from "../components/Searchbar.svelte";
-  import Grid from "../components/Grid.svelte";
   import Table from "../components/Table.svelte";
   import Kpi from "../components/Kpi.svelte";
   import { onMount } from "svelte";
